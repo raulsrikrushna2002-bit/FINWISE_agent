@@ -1,0 +1,176 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>FINWISE</title>
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --text: #1f2933;
+        --muted: #5f6b7a;
+        --accent: #2a4a74;
+        --border: #d9dee5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      .page {
+        max-width: 980px;
+        margin: 32px auto 48px;
+        padding: 0 24px;
+      }
+
+      .brand {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+
+      .section-title {
+        margin: 20px 0 4px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .section-subtitle {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .panel {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        padding: 20px;
+      }
+
+      .upload-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 16px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .field input[type="file"] {
+        width: 100%;
+      }
+
+      .field.ledger {
+        margin-left: 160px;
+      }
+
+      .primary-action {
+        display: flex;
+        justify-content: center;
+        margin: 24px 0;
+      }
+
+      .primary-action button {
+        background: var(--accent);
+        color: #ffffff;
+        border: 1px solid var(--accent);
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .note {
+        margin-top: 16px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 760px) {
+        .upload-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="brand">FINWISE</div>
+      <div class="section-title">Bank Reconciliation</div>
+      <div class="section-subtitle">Upload bank and ledger statements for reconciliation.</div>
+
+      <div class="section-subtitle">Reduce monthly bank reconciliation effort from 40–60 hours to under 3 hours. </div>
+      <div class="section-subtitle"> Built for CA firms and accounting service providers.</div>
+      <div class="section-subtitle"> Reconsillation done under 5 minute so plese keep patinece dont close the tab.</div>
+
+      <div class="panel">
+        <form method="post" enctype="multipart/form-data">
+          {% if password_error %}
+            <p>{{ password_error }}</p>
+          {% endif %}
+          <div class="upload-row">
+            <div class="field">
+              <label for="bank_statement">Bank Statement</label>
+              <input id="bank_statement" name="bank_statement" type="file">
+            </div>
+            <div class="field ledger">
+              <label for="ledger_statement">Ledger Statement</label>
+              <input id="ledger_statement" name="ledger_statement" type="file">
+            </div>
+          </div>
+          <div class="upload-row">
+            <div class="field">
+              <label for="app_password">Password</label>
+              <input id="app_password" name="app_password" type="password" autocomplete="current-password">
+            </div>
+          </div>
+
+          <div class="primary-action">
+            <button type="submit">Run Reconciliation</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="note">No data is modified automatically. Review is required before finalization.</div>
+      <div class="note">Early access: results are provided for review and may contain errors. Verify all outputs before use in any filings or decisions.</div>
+      <div class="note">Upload only statements you are authorized to share. Files are processed for reconciliation; avoid including sensitive data you don't need.</div>
+      <div class="note">If reconciliation takes more than 5 minutes, keep this tab open and avoid re-submitting to prevent duplicate processing.</div>
+
+      {% if bank_error %}
+        <p>{{ bank_error }}</p>
+      {% endif %}
+      {% if bank_preview is not none %}
+        <h3>Bank Statement Preview (First 5 Rows)</h3>
+        {{ bank_preview.to_html(index=False, border=1) | safe }}
+      {% endif %}
+
+      {% if ledger_error %}
+        <p>{{ ledger_error }}</p>
+      {% endif %}
+      {% if ledger_preview is not none %}
+        <h3>Ledger Statement Preview (First 5 Rows)</h3>
+        {{ ledger_preview.to_html(index=False, border=1) | safe }}
+      {% endif %}
+
+      <h3>Reconciliation Summary</h3>
+      {% if reconciliation_error %}
+        <p>{{ reconciliation_error }}</p>
+      {% elif reconciliation_summary %}
+        <pre>{{ reconciliation_summary }}</pre>
+      {% else %}
+        <p>No reconciliation summary available.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
